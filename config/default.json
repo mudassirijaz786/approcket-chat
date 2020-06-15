@@ -1,0 +1,7 @@
+{
+  "jwtPrivateKey": "myJWTKey",
+  "db": "mongodb://approcket:approcketpass123@ds155916.mlab.com:55916/approcket",
+  "port": "3900",
+  "requiresAuth": false,
+  "frontEndURL": ""
+}

@@ -1,0 +1,12 @@
+definitions:
+  faq:
+    type: object
+    title: faq
+    required:
+      - question
+      - answer
+    properties:
+      question:
+        type: string
+      answer:
+        type: string
