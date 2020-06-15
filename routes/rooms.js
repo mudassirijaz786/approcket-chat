@@ -27,3 +27,4 @@ router.post("/sendMessage/:id", auth, async (req, res) => {
 });
 
 // router.post
+module.exports = router;

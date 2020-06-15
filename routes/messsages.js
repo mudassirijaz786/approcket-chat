@@ -20,3 +20,5 @@ router.put("/read/:id", auth, async (req, res) => {
 router.delete("/:id", auth, async (req, res) => {
   // findById and remove the text... from DB
 });
+
+module.exports = router;
