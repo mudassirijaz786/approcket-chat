@@ -41,19 +41,20 @@ router.post("/login", async (req, res) => {
   try {
     const { error } = validateLogin(req.body);
     if (error) return res.status(400).send(error.details[0].message);
-    let user = await User.findOne({ email: req.body.email });
+    let user = await User.findOne({ username: req.body.username });
     if (!user)
-      return res.status(400).json({ error: "Invalid email or password." });
+      return res.status(400).json({ error: "Invalid username or password." });
     const validPassword = await bcrypt.compare(
       req.body.password,
       user.password
     );
     if (!validPassword)
-      return res.status(400).json({ error: "Invalid email or password." });
+      return res.status(400).json({ error: "Invalid username or password." });
     const token = user.generateAuthToken();
     res.header("x-auth-token", token);
     res.send({ token });
   } catch (error) {
+    console.log(error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
@@ -63,12 +64,12 @@ router.post("/register", async (req, res) => {
   try {
     const { error } = validate(req.body);
     if (error) return res.status(400).send(error.details[0].message);
-    let user = await User.findOne({ email: req.body.email });
+    let user = await User.findOne({ username: req.body.username });
     if (user)
       return res.status(409).json({
-        message: `User with email ${req.body.email} is already registered`,
+        message: `User with username ${req.body.username} is already registered`,
       });
-    user = new User(_.pick(req.body, ["name", "password", "email"]));
+    user = new User(_.pick(req.body, ["password", "username"]));
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(user.password, salt);
     await user.save();
@@ -82,8 +83,8 @@ router.post("/register", async (req, res) => {
 // function to validate login params
 validateLogin = (req) => {
   const schema = {
-    email: Joi.string().min(5).max(255).required().email(),
-    password: Joi.string().alphanum().min(8).max(32).required(),
+    username: Joi.string().min(5).max(255).required(),
+    password: Joi.string().min(8).max(32).required(),
   };
 
   return Joi.validate(req, schema);
