@@ -8,6 +8,7 @@ const { User, validate } = require("../models/user");
 const router = express.Router();
 const Joi = require("joi");
 
+//fetching all the Users
 router.get("/", auth, async (req, res) => {
   try {
     const user = await User.find().select("-password");
@@ -21,6 +22,7 @@ router.get("/", auth, async (req, res) => {
   }
 });
 
+// getting current user
 router.get("/me/:id", auth, async (req, res) => {
   try {
     const user = await User.findById(req.params.id).select("-password");
