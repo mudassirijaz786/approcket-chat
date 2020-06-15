@@ -32,9 +32,11 @@ router.get("/:id", auth, async (req, res) => {
 router.post("/sendMessage", async (req, res) => {
   //save the  message in the DB
   try {
-    const message = new Message(_.pick(req.body, ["question", "answer"]));
+    const message = new Message(
+      _.pick(req.body, ["from", "to", "content", "status", "created_at"])
+    );
     await message.save();
-    res.json({ message: "message has been saved successfully" });
+    res.json({ message: "message has been sent successfully" });
   } catch (error) {
     res.status(500).json({ error: "Internal Server Error" });
   }
@@ -47,8 +49,8 @@ router.put("/read/:id", auth, async (req, res) => {
     if (!message) {
       res.status(404).json({ message: `message not found` });
     } else {
-      await Message.updateOne(
-        { _id: req.params.id },
+      await Message.findByIdAndUpdate(
+        req.params.id,
         { $set: { read: true } },
         { new: true }
       );

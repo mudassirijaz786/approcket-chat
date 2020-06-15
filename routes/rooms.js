@@ -29,13 +29,15 @@ router.get("/:id", auth, async (req, res) => {
 
 router.post("/", auth, async (req, res) => {
   // create new room and save into the DB
-  //   try {
-  const room = new Room();
-  await room.save();
-  res.json({ message: "room has been saved successfully" });
-  //   } catch (error) {
-  res.status(500).json({ error: "Internal Server Error" });
-  //   }
+  try {
+    const room = new Room(_.pick[("name", "created_at")]);
+    room.members = [];
+    room.messages = [];
+    await room.save();
+    res.json({ message: "room has been saved successfully" });
+  } catch (error) {
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 });
 router.put("/joinRoom/:id", auth, async (req, res) => {
   // findBByidandupdate and update the users in the arrays as did ealrier like in the addSkill etc...
@@ -44,11 +46,11 @@ router.put("/joinRoom/:id", auth, async (req, res) => {
     if (!found) {
       res.status(404).json({ message: "Room not found" });
     } else {
-      await Room.findOneAndUpdate(
-        { _id: req.params.id },
+      await Room.findByIdAndUpdate(
+        req.params.id,
         {
           $push: {
-            members: req.body,
+            members: req.body.member_id,
           },
         },
         { new: true }
@@ -85,7 +87,7 @@ router.put("/leaveRoom/:id", auth, async (req, res) => {
         { _id: req.params.id },
         {
           $pull: {
-            skills: { _id: _id },
+            members: { _id: _id },
           },
         },
         { new: true }
@@ -96,7 +98,7 @@ router.put("/leaveRoom/:id", auth, async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
-router.post("/sendMessage/:id", auth, async (req, res) => {
+router.put("/sendMessage/:id", auth, async (req, res) => {
   // find by id and add message to messages array in the room
   try {
     const found = await Room.findOne({ _id: req.params.id });
@@ -107,7 +109,7 @@ router.post("/sendMessage/:id", auth, async (req, res) => {
         { _id: req.params.id },
         {
           $push: {
-            messages: req.body,
+            messages: req.body.message_id,
           },
         },
         { new: true }
@@ -118,9 +120,4 @@ router.post("/sendMessage/:id", auth, async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
-<<<<<<< HEAD
-
-// router.post
-=======
->>>>>>> 6947944280b552901afd091146eb0b4fe3bd97f3
 module.exports = router;
