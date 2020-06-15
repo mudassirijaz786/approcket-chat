@@ -9,36 +9,6 @@ const router = express.Router();
 const Joi = require("joi");
 
 //fetching all the Users
-
-/**
- * @swagger
- * tags:
- *   name: Users
- *   description: user management
- */
-/**
- * @swagger
- * /api/user:
- *  get:
- *    description: Use to request all user
- *    summary:  Use to request all user
- *    tags: [Users]
- *    parameters:
- *    - in: header
- *      name: x-auth-token
- *      type: string
- *      required: true
- *      description: jwt token containg user field in JWT.
- *    responses:
- *      '200':
- *        description: A successful response containg all user in JSON
- *      '500':
- *        description: internal server error
- *      '404':
- *        description: message in json format indicating  not found!
- *      '401':
- *        description: message in json format indicating Access denied, no token provided. Please provide auth token.
- */
 router.get("/", auth, async (req, res) => {
   try {
     const user = await User.find().select("-password");
@@ -53,34 +23,6 @@ router.get("/", auth, async (req, res) => {
 });
 
 // getting current user
-/**
- * @swagger
- * /api/user/me/{id}:
- *  get:
- *    description: Use to request a single user
- *    summary:  Use to request a single user
- *    tags: [Users]
- *    parameters:
- *    - in: header
- *      name: x-auth-token
- *      type: string
- *      required: true
- *      description: jwt token containg jwt
- *    - in: path
- *      name: id
- *      type: string
- *      required: true
- *      description: Object ID of the user to get.
- *    responses:
- *      '500':
- *        description: internal server error
- *      '200':
- *        description: A successful response containg all user in JSON
- *      '404':
- *        description: message in json format indicating  not found!
- *      '401':
- *        description: message in json format indicating Access denied, no token provided. Please provide auth token.
- */
 router.get("/me/:id", auth, async (req, res) => {
   try {
     const user = await User.findById(req.params.id).select("-password");
@@ -95,35 +37,6 @@ router.get("/me/:id", auth, async (req, res) => {
 });
 
 // login
-/**
- * @swagger
- * /api/user/login:
- *  post:
- *    description: use to login user into the system
- *    summary: login user into the system using email and password.
- *    tags: [Users]
- *    parameters:
- *    - in: body
- *      name: user
- *      description: The user to login.
- *      schema:
- *        type: object
- *        required:
- *        - email
- *        - password
- *        properties:
- *          email:
- *            type: string
- *          password:
- *            type: string
- *    responses:
- *      '500':
- *        description: internal server error
- *      '200':
- *        description: jwt token for that particular user loged in.
- *      '400':
- *        description: message in json format Invalid email or password.
- */
 router.post("/login", async (req, res) => {
   try {
     const { error } = validateLogin(req.body);
@@ -146,38 +59,6 @@ router.post("/login", async (req, res) => {
 });
 
 // register
-/**
- * @swagger
- * /api/user/register:
- *  post:
- *    description: use to resister user into the system
- *    summary: use to resister user into the system.
- *    tags: [Users]
- *    parameters:
- *    - in: body
- *      name: user
- *      description: The user to login.
- *      schema:
- *        type: object
- *        required:
- *        - email
- *        - password
- *        - name
- *        properties:
- *          name:
- *            type: string
- *          email:
- *            type: string
- *          password:
- *            type: string
- *    responses:
- *      '500':
- *        description: internal server error
- *      '200':
- *        description: jwt token for that particular new user.
- *      '400':
- *        description: message in json format indicating user with email already exists.
- */
 router.post("/register", async (req, res) => {
   try {
     const { error } = validate(req.body);
